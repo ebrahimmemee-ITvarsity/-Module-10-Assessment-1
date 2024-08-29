@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Sample Application</title>
+</head>
+<body>
+    <button id="getData">Get Data</button>
+    <button id="getList">Get List</button>
+    <br/><br/>
+
+    <form id="myForm">
+        <input type="text" name="firstname" id="firstname" value="Firstname" />
+        <input type="text" name="lastname" id="lastname" value="Lastname" /><br/>
+        <button type="submit" id="submitForm">Submit</button>
+    </form>
+
+    <p id="posts"></p>
+    <p id="message"></p>
+    <p id="greeting"></p>
+
+    <script>
+        // Event handlers
+        document.getElementById("getData").addEventListener('click', getData);
+        document.getElementById("getList").addEventListener('click', getList);
+        document.getElementById("submitForm").addEventListener('click', submitForm);
+
+        function getData() {
+// Fetch data from the server
+            fetch('https://mysite.itvarsity.org/api/fetch/get-data/')
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById("message").innerHTML = data;
+                })
+                .catch(error => console.error('Error fetching data:', error));
+        }
+
+        function getList() {
+            fetch('https://mysite.itvarsity.org/api/fetch/get-list/')
+                .then(response => response.json())
+                .then(data => {
+                    let output = "<h1>Posts</h1>";
+                    for (let i = 0; i < data.length; i++) {
+                        output += `
+                            <ul>
+                                <li><h2>${data[i][0]}</h2></li>
+                                <li><b>${data[i][1]}</b></li>
+                                <li><b>${data[i][2]}</b></li>
+                            </ul>
+                        `;
+                    }
+                    document.getElementById("posts").innerHTML = output;
+                })
+        }
+
+        function submitForm(e) {
+            e.preventDefault(); // Prevents the default form submission behavior
+
+            const form = new FormData(document.getElementById("myForm")); // Use the correct form ID
+
+            fetch('https://mysite.itvarsity.org/api/fetch/send-data/', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                },
+                body: form
+            })
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById("greeting").innerHTML = data;
+                })
+        }
+    </script>
+</body>
+</html>
